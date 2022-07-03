@@ -17,6 +17,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'allauth',
     'allauth.account',
+    'authentication',
 ]
 
 MIDDLEWARE = [
@@ -34,7 +35,7 @@ ROOT_URLCONF = 'schedule.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -90,3 +91,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SITE_ID = 1
 
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+ACCOUNT_AUTHENTICATION_METHOD="email"
+
+ACCOUNT_EMAIL_REQUIRED=True
+
+ACCOUNT_USERNAME_REQUIRED=False
