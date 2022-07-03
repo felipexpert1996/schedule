@@ -1,7 +1,16 @@
-from allauth.account.views import SignupView
-from .forms import CustonSingupForm
+from allauth.account.views import SignupView, LoginView, LogoutView
+from .forms import CustomSingupForm, CustomLoginForm
 
 
-class SignupView(SignupView):
+class CustomSignupView(SignupView):
     template_name = 'auth/signup.html'
-    form_class = CustonSingupForm
+    form_class = CustomSingupForm
+
+
+class CustomLoginView(LoginView):
+    template_name = 'auth/login.html'
+    form_class = CustomLoginForm
+
+
+class CustomLogoutView(LogoutView):
+    pass

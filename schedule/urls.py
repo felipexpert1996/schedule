@@ -7,7 +7,6 @@ from django.contrib.staticfiles import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('autenticacao/', include('authentication.urls')),
-    path('accounts/', include('allauth.urls')),
 ]
 
 if settings.DEBUG:
