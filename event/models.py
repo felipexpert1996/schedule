@@ -1,13 +1,13 @@
 from operator import mod
 from statistics import mode
 from django.db import models
-from django.contrib.auth.models import User
+from authentication.models import CustomUser
 
 
 class Event(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    start_date = models.DateField()
-    start_time = models.TimeField()
-    end_date = models.DateField()
-    end_time = models.TimeField()
-    all_day = models.BooleanField()
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    start_date = models.DateField(help_text='Data inicial do evento')
+    start_time = models.TimeField(help_text='Hora inicial do evento')
+    end_date = models.DateField(help_text='Data final do evento')
+    end_time = models.TimeField(help_text='Hora final do evento')
+    all_day = models.BooleanField(help_text='O evento vai durar o dia inteiro?')

@@ -15,10 +15,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'allauth',
     'allauth.account',
+    'drf_yasg',
     'authentication',
-    'event'
+    'event',
 ]
 
 MIDDLEWARE = [
@@ -103,3 +105,5 @@ ACCOUNT_EMAIL_REQUIRED=True
 ACCOUNT_USERNAME_REQUIRED=False
 
 ACCOUNT_LOGOUT_ON_GET=True
+
+AUTH_USER_MODEL = 'authentication.CustomUser' 
