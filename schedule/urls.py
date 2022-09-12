@@ -13,7 +13,7 @@ router.register(r'events', EventViewset, basename='events')
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Api livraria",
+        title="Apis agenda",
         default_version='v1',
         description="Exemplo de boas praticas utilizando django rest framework",
         terms_of_service="",

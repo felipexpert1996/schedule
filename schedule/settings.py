@@ -106,4 +106,6 @@ ACCOUNT_USERNAME_REQUIRED=False
 
 ACCOUNT_LOGOUT_ON_GET=True
 
-AUTH_USER_MODEL = 'authentication.CustomUser' 
+ACCOUNT_EMAIL_VERIFICATION = "none"
+
+AUTH_USER_MODEL = 'authentication.CustomUser'
