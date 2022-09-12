@@ -3,7 +3,7 @@ from django.urls import path, include, re_path
 from django.conf import settings
 from django.contrib.staticfiles import views
 from rest_framework.routers import DefaultRouter
-from event.views import EventViewset
+from event.views import EventViewset, EventTemplateViewset
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -31,6 +31,7 @@ urlpatterns = [
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('swagger/redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('autenticacao/', include('authentication.urls')),
+    path('evento/calendario/', EventTemplateViewset.as_view(), name='callendar')
 ]
 
 if settings.DEBUG:

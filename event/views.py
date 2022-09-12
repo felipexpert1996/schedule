@@ -1,6 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
 from .models import Event
 from .serializer import EventSerializer
+from django.views.generic import TemplateView
 
 
 class EventViewset(ModelViewSet):
@@ -26,3 +27,7 @@ class EventViewset(ModelViewSet):
 
     queryset = Event.objects.all()
     serializer_class = EventSerializer
+
+
+class EventTemplateViewset(TemplateView):
+    template_name = 'event/callendar.html'
