@@ -7,6 +7,7 @@ from event.views import EventViewset, EventTemplateViewset
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from django.views.generic.base import RedirectView
 
 router = DefaultRouter()
 router.register(r'events', EventViewset, basename='events')
@@ -31,7 +32,8 @@ urlpatterns = [
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('swagger/redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('autenticacao/', include('authentication.urls')),
-    path('evento/calendario/', EventTemplateViewset.as_view(), name='callendar')
+    path('evento/calendario/', EventTemplateViewset.as_view(), name='callendar'),
+    path('', RedirectView.as_view(url='/evento/calendario/')),  
 ]
 
 if settings.DEBUG:
