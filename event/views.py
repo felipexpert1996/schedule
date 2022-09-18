@@ -2,6 +2,7 @@ from rest_framework.viewsets import ModelViewSet
 from .models import Event
 from .serializer import EventSerializer
 from django.views.generic import TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class EventViewset(ModelViewSet):
@@ -29,5 +30,5 @@ class EventViewset(ModelViewSet):
     serializer_class = EventSerializer
 
 
-class EventTemplateViewset(TemplateView):
+class EventTemplateViewset(LoginRequiredMixin, TemplateView):
     template_name = 'event/callendar.html'

@@ -31,9 +31,9 @@ urlpatterns = [
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('swagger/redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-    path('autenticacao/', include('authentication.urls')),
-    path('evento/calendario/', EventTemplateViewset.as_view(), name='callendar'),
-    path('', RedirectView.as_view(url='/evento/calendario/')),  
+    path('accounts/', include('authentication.urls')),
+    path('events/calendar/', EventTemplateViewset.as_view(), name='calendar'),
+    path('', RedirectView.as_view(url='/events/calendar/')),  
 ]
 
 if settings.DEBUG:
