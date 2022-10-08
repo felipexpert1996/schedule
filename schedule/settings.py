@@ -109,3 +109,5 @@ ACCOUNT_LOGOUT_ON_GET=True
 ACCOUNT_EMAIL_VERIFICATION = "none"
 
 AUTH_USER_MODEL = 'authentication.CustomUser'
+
+APPEND_SLASH = False 

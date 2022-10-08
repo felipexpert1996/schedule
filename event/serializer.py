@@ -1,20 +1,28 @@
-from rest_framework.serializers import ModelSerializer
+from asyncore import write
+from rest_framework.serializers import ModelSerializer, CharField
 from .models import Event
 from authentication.models import CustomUser
-from authentication.serializer import UserSerializer
-
+from rest_framework.exceptions import ValidationError
 
 class EventSerializer(ModelSerializer):
-    user = UserSerializer(many=False, required=True, help_text='usuário do evento')
+
+    uuid = CharField(write_only=True)
+
     class Meta:
         model = Event
-        fields = '__all__'
+        fields = ['uuid', 'start_date', 'start_time', 'end_date', 'end_time', 'all_day']
 
     def create(self, validated_data):
-        user = validated_data['user']
-        del validated_data['user']
-        user = CustomUser.objects.get(uuid=user)
-        event = Event.objects.create(**validated_data)
-        event.user = user
-        event.save()
-        return event
+        try:
+            event = Event.objects.create(
+                user = CustomUser.objects.get(uuid=validated_data['uuid']),
+                start_date = validated_data['start_date'],
+                start_time = validated_data['start_time'],
+                end_date = validated_data['end_date'],
+                end_time = validated_data['end_time'],
+                all_day = validated_data['all_day']
+            )
+            return event
+        except:
+            return ValidationError(detail={'user': 'User not found'}, code=500)
+        

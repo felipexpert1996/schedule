@@ -11,3 +11,6 @@ class Event(models.Model):
     end_date = models.DateField(help_text='Data final do evento')
     end_time = models.TimeField(help_text='Hora final do evento')
     all_day = models.BooleanField(help_text='O evento vai durar o dia inteiro?')
+
+    def __str__(self):
+        return f'{self.user} {self.start_date} - {self.end_date}'
