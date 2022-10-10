@@ -10,12 +10,13 @@ class EventSerializer(ModelSerializer):
 
     class Meta:
         model = Event
-        fields = ['uuid', 'start_date', 'start_time', 'end_date', 'end_time', 'all_day']
+        fields = ['uuid', 'id', 'title', 'start_date', 'start_time', 'end_date', 'end_time', 'all_day']
 
     def create(self, validated_data):
         try:
             event = Event.objects.create(
                 user = CustomUser.objects.get(uuid=validated_data['uuid']),
+                title = validated_data['title'],
                 start_date = validated_data['start_date'],
                 start_time = validated_data['start_time'],
                 end_date = validated_data['end_date'],
@@ -25,4 +26,3 @@ class EventSerializer(ModelSerializer):
             return event
         except:
             return ValidationError(detail={'user': 'User not found'}, code=500)
-        

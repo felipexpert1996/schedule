@@ -49,6 +49,10 @@
         <div class="modal-body">
           <form>
             <div class="mb-3">
+              <label for="event_title" class="form-label">Título do evento</label>
+              <input class="form-control" id="event_title" aria-describedby="Título do evento">
+            </div>
+            <div class="mb-3">
               <label for="inicio_evento" class="form-label">Início do evento</label>
               <input type="date" class="form-control" id="inicio_evento" aria-describedby="Início do evento">
             </div>
@@ -66,9 +70,13 @@
             </div>
           </form>
         </div>
-        <div class="modal-footer">
+        <div class="modal-footer" id="create-buttons" style="display: none;">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-          <button type="button" id="saveEvent" class="btn btn-primary">Salvar</button>
+          <button type="button" id="saveEvent" class="btn btn-success">Salvar</button>
+        </div>
+        <div class="modal-footer" id="update-buttons" style="display: none;">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Excluir</button>
+          <button type="button" id="updateEvent" class="btn btn-primary">Atualizar</button>
         </div>
       </div>
     </div>
@@ -110,9 +118,17 @@
     
 
   <script>
+
+    let calendar
+    const options = {backdrop: false, focus: true, keyboard: true}
+
     document.addEventListener('DOMContentLoaded', function() {
+      renderCalendar()
+    });
+
+    const renderCalendar = () => {
       const calendarEl = document.getElementById('calendar');
-      const calendar = new FullCalendar.Calendar(calendarEl, {
+      calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         locale: 'pt-br',
         buttonText:{
@@ -122,46 +138,77 @@
             day:      'Dia',
             list:     'Lista',
         },
+        events: async(info, successCallback, failureCallback) => {
+          return getEvents()
+        },
         dateClick: function(info) {
-          document.querySelector('#modalLabel').innerHTML = `Cadastrar evento para o dia ${info.date.toLocaleDateString("pt-BR")}?`
-          const options = {backdrop: true, focus: true, keyboard: true}
-          const myModal = new bootstrap.Modal(document.getElementById('modal-form-event'), options)
-          document.querySelector('#inicio_evento').value = info.dateStr
-          document.querySelector('#saveEvent').addEventListener("click", function(){
-            const startEvent = document.querySelector('#inicio_evento').value
-            const endEvent = document.querySelector('#fim_evento').value
-            const startEventHour = document.querySelector('#inicio_hora_evento').value
-            const endEventHour = document.querySelector('#fim_hora_evento').value
-            if(startEvent && endEvent && startEventHour && endEventHour && (startEvent <= endEvent && startEventHour <= endEventHour)){
-              document.querySelector('#fim_evento').value = null
-              document.querySelector('#inicio_hora_evento').value = null
-              document.querySelector('#fim_hora_evento').value = null
-              saveEvent(startEvent, endEvent, startEventHour, endEventHour, myModal)
-            }
-          })
-          myModal.show()
+          formModal(info)
+        },
+        eventClick: function(info) {
+          formModal(info)
         }
       });
-      calendar.render();
-    });
+      calendar.render()
+    }
+
+    const formModal = async(info) => {
+      
+      
+      const myModal = new bootstrap.Modal(document.getElementById('modal-form-event'), options)
+
+      document.querySelector('#modalLabel').innerHTML = info.event?`Evento ${info.event.title}`:`Cadastrar evento para o dia ${info.date.toLocaleDateString("pt-BR")}?`
+      document.querySelector('#event_title').value = info.event?info.event.title:null
+      document.querySelector('#inicio_evento').value = info.event?`${info.event.start.getFullYear()}-${info.event.start.getMonth()+1<10?"0"+info.event.start.getMonth()+1:info.event.start.getMonth()+1}-${info.event.start.getDate()<10?"0"+info.event.start.getDate():info.event.start.getDate()}`:info.dateStr
+      document.querySelector('#fim_evento').value = info.event?`${info.event.end.getFullYear()}-${info.event.end.getMonth()+1<10?"0"+info.event.end.getMonth()+1:info.event.end.getMonth()+1}-${info.event.end.getDate()<10?"0"+info.event.end.getDate():info.event.end.getDate()}`:null
+      document.querySelector('#inicio_hora_evento').value = info.event?`${info.event.end.getHours()<10?"0"+info.event.start.getHours():info.event.start.getHours()}:${info.event.start.getMinutes()<10?"0"+info.event.start.getMinutes():info.event.start.getMinutes()}`:null
+      document.querySelector('#fim_hora_evento').value = info.event?`${info.event.end.getHours()<10?"0"+info.event.end.getHours():info.event.end.getHours()}:${info.event.end.getMinutes()<10?"0"+info.event.end.getMinutes():info.event.end.getMinutes()}`:null
+
+      let btnChangeEvent
+
+      if(info.event){
+        document.querySelector('#update-buttons').style.display = null;
+        document.querySelector('#create-buttons').style.display = "none";
+        btnChangeEvent = document.querySelector('#updateEvent')
+      }else{
+        document.querySelector('#create-buttons').style.display = null;
+        document.querySelector('#update-buttons').style.display = "none";
+        btnChangeEvent = document.querySelector('#saveEvent')
+        
+      } 
+      
+      btnChangeEvent.addEventListener("click", function(){
+        const startEvent = document.querySelector('#inicio_evento').value
+        const endEvent = document.querySelector('#fim_evento').value
+        const startEventHour = document.querySelector('#inicio_hora_evento').value
+        const endEventHour = document.querySelector('#fim_hora_evento').value
+        const title = document.querySelector('#event_title').value
+        if(title && startEvent && endEvent && startEventHour && endEventHour && (startEvent <= endEvent && startEventHour <= endEventHour)){
+          if(!info.event){
+            saveEvent(title, startEvent, endEvent, startEventHour, endEventHour)
+          }else{
+            updateEvent(info.event.id ,title, startEvent, endEvent, startEventHour, endEventHour)
+          }
+          myModal.hide()
+        }
+      }),
+      myModal.show()
+    }
 
     const errorModal = () => {
-      const options = {backdrop: true, focus: true, keyboard: true}
       const myModal = new bootstrap.Modal(document.getElementById('modal-form-data-error'), options)
       myModal.show()
     }
 
     const successModal = (data) => {
-      const options = {backdrop: true, focus: true, keyboard: true}
       const myModal = new bootstrap.Modal(document.getElementById('modal-form-data-success'), options)
-      document.querySelector('#modal-form-data-body').innerHTML = `<p>Evento do dia ${data["start_date"]} até o dia ${data["end_date"]} salvo com sucesso<p>`
+      document.querySelector('#modal-form-data-body').innerHTML = `<p>Evento ${data["title"]} salvo com sucesso<p>`
       myModal.show()
     }
 
-    const saveEvent = (startEvent, endEvent, startEventHour, endEventHour, oldModal) => {
-      oldModal.hide()
+    const saveEvent = (title, startEvent, endEvent, startEventHour, endEventHour) => {
       const data = {
         uuid: '{{user.uuid|safe}}',
+        title: title,
         start_date: startEvent,
         start_time: startEventHour,
         end_date: endEvent,
@@ -184,6 +231,43 @@
       })
     }
 
+    const updateEvent = (id, title, startEvent, endEvent, startEventHour, endEventHour) => {
+      const data = {
+        uuid: '{{user.uuid|safe}}',
+        title: title,
+        start_date: startEvent,
+        start_time: startEventHour,
+        end_date: endEvent,
+        end_time: endEventHour,
+        all_day: false
+      }
+      fetch(`/api/events/${id}/`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          "X-CSRFToken": '{{csrf_token}}'
+        },
+        body: JSON.stringify(data)
+      }).then((response) => response.json())
+      .catch((error) => {
+        errorModal()
+      })
+      .then((data) => {
+        calendar.destroy()
+        renderCalendar()
+        successModal(data)
+      })
+    }
+
+    const getEvents = async() => {
+      let events
+      await fetch('/api/events/')
+      .then((response) => response.json())
+      .then((json) => {
+        events = json.map(event => ({ id:event.id, title: event.title, start: event.start_date+'T'+event.start_time, end:  event.end_date+'T'+event.end_time}))
+      })
+      return events
+    }
   </script>
 </body>
 </html>

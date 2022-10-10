@@ -6,6 +6,7 @@ from authentication.models import CustomUser
 
 class Event(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    title = models.CharField(max_length=100, help_text='Titulo do evento')
     start_date = models.DateField(help_text='Data inicial do evento')
     start_time = models.TimeField(help_text='Hora inicial do evento')
     end_date = models.DateField(help_text='Data final do evento')
@@ -13,4 +14,4 @@ class Event(models.Model):
     all_day = models.BooleanField(help_text='O evento vai durar o dia inteiro?')
 
     def __str__(self):
-        return f'{self.user} {self.start_date} - {self.end_date}'
+        return f'{self.title} {self.start_date} - {self.end_date}'
