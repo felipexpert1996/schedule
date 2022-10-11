@@ -75,7 +75,7 @@
           <button type="button" id="saveEvent" class="btn btn-success">Salvar</button>
         </div>
         <div class="modal-footer" id="update-buttons" style="display: none;">
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Excluir</button>
+          <button type="button" id="deleteEvent" class="btn btn-danger">Excluir</button>
           <button type="button" id="updateEvent" class="btn btn-primary">Atualizar</button>
         </div>
       </div>
@@ -111,6 +111,23 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-form-data-delete" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Evento deletado com sucesso</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="modal-form-data-body">
+          <p>Evento deletado com sucesso</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
         </div>
       </div>
     </div>
@@ -153,7 +170,6 @@
 
     const formModal = async(info) => {
       
-      
       const myModal = new bootstrap.Modal(document.getElementById('modal-form-event'), options)
 
       document.querySelector('#modalLabel').innerHTML = info.event?`Evento ${info.event.title}`:`Cadastrar evento para o dia ${info.date.toLocaleDateString("pt-BR")}?`
@@ -169,11 +185,16 @@
         document.querySelector('#update-buttons').style.display = null;
         document.querySelector('#create-buttons').style.display = "none";
         btnChangeEvent = document.querySelector('#updateEvent')
+        if(info.event){
+          document.querySelector('#deleteEvent').addEventListener("click", function(){
+            deleteEvent(info.event.id)
+            myModal.hide()
+          })
+        }
       }else{
         document.querySelector('#create-buttons').style.display = null;
         document.querySelector('#update-buttons').style.display = "none";
         btnChangeEvent = document.querySelector('#saveEvent')
-        
       } 
       
       btnChangeEvent.addEventListener("click", function(){
@@ -182,6 +203,7 @@
         const startEventHour = document.querySelector('#inicio_hora_evento').value
         const endEventHour = document.querySelector('#fim_hora_evento').value
         const title = document.querySelector('#event_title').value
+
         if(title && startEvent && endEvent && startEventHour && endEventHour && (startEvent <= endEvent && startEventHour <= endEventHour)){
           if(!info.event){
             saveEvent(title, startEvent, endEvent, startEventHour, endEventHour)
@@ -202,6 +224,11 @@
     const successModal = (data) => {
       const myModal = new bootstrap.Modal(document.getElementById('modal-form-data-success'), options)
       document.querySelector('#modal-form-data-body').innerHTML = `<p>Evento ${data["title"]} salvo com sucesso<p>`
+      myModal.show()
+    }
+
+    const deleteModal = () => {
+      const myModal = new bootstrap.Modal(document.getElementById('modal-form-data-delete'), options)
       myModal.show()
     }
 
@@ -227,6 +254,8 @@
         errorModal()
       })
       .then((data) => {
+        calendar.destroy()
+        renderCalendar()
         successModal(data)
       })
     }
@@ -268,6 +297,29 @@
       })
       return events
     }
+
+    const deleteEvent = (id) => {
+      fetch(`/api/events/${id}/`, { 
+        method: 'DELETE', 
+        headers: {
+          'Content-Type': 'application/json',
+          "X-CSRFToken": '{{csrf_token}}'
+        },
+      })
+      .then((response) => {
+        if(response.status == 204){
+          calendar.destroy()
+          renderCalendar()
+          deleteModal()
+        }else{
+          errorModal()
+        }
+      })
+      .catch((error) => {
+        errorModal()
+      })
+    }
+
   </script>
 </body>
 </html>
