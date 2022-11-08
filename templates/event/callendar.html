@@ -82,57 +82,18 @@
     </div>
   </div>
 
-  <div class="modal" id="modal-form-data-success" tabindex="-1">
+  <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Evento salvo com sucesso</h5>
+          <h1 class="modal-title fs-5" id="modalLabel"></h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body" id="modal-form-data-body">
-          
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
-        </div>
+        <div class="modal-body"></div>
+        <div class="modal-footer"></div>
       </div>
     </div>
   </div>
-
-  <div class="modal" id="modal-form-data-error" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Erro ao salvar evento</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body" id="modal-form-data-body">
-          <p>Erro interno ao tentar salvar evento, tente novamente e caso o erro persista contacte um administrador</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fechar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal" id="modal-form-data-delete" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Evento deletado com sucesso</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body" id="modal-form-data-body">
-          <p>Evento deletado com sucesso</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-    
 
   <script>
 
@@ -216,19 +177,11 @@
       myModal.show()
     }
 
-    const errorModal = () => {
-      const myModal = new bootstrap.Modal(document.getElementById('modal-form-data-error'), options)
-      myModal.show()
-    }
-
-    const successModal = (data) => {
-      const myModal = new bootstrap.Modal(document.getElementById('modal-form-data-success'), options)
-      document.querySelector('#modal-form-data-body').innerHTML = `<p>Evento ${data["title"]} salvo com sucesso<p>`
-      myModal.show()
-    }
-
-    const deleteModal = () => {
-      const myModal = new bootstrap.Modal(document.getElementById('modal-form-data-delete'), options)
+    const callModal = (label, body, footer) => {
+      const myModal = new bootstrap.Modal(document.getElementById('modal'), options)
+      document.querySelector('#modal #modalLabel').innerHTML = label
+      document.querySelectorAll('#modal .modal-body')[0].innerHTML = body
+      document.querySelectorAll('#modal .modal-footer')[0].innerHTML = footer
       myModal.show()
     }
 
@@ -251,12 +204,18 @@
         body: JSON.stringify(data)
       }).then((response) => response.json())
       .catch((error) => {
-        errorModal()
+        const label = `Erro ao salvar evento`
+        const body = `<p>Erro interno ao tentar salvar evento, tente novamente e caso o erro persista contacte um administrador</p>`
+        const footer = `<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fechar</button>`
+        callModal(label, body, footer)
       })
       .then((data) => {
         calendar.destroy()
         renderCalendar()
-        successModal(data)
+        const label = `Evento ${data["title"]} salvo com sucesso`
+        const body = `<p>Evento ${data["title"]} salvo com sucesso<p>`
+        const footer = `<button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>`
+        callModal(label, body, footer)
       })
     }
 
@@ -279,12 +238,18 @@
         body: JSON.stringify(data)
       }).then((response) => response.json())
       .catch((error) => {
-        errorModal()
+        const label = `Erro ao salvar evento`
+        const body = `<p>Erro interno ao tentar salvar evento, tente novamente e caso o erro persista contacte um administrador</p>`
+        const footer = `<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fechar</button>`
+        callModal(label, body, footer)
       })
       .then((data) => {
         calendar.destroy()
         renderCalendar()
-        successModal(data)
+        const label = `Evento ${data["title"]} salvo com sucesso`
+        const body = `<p>Evento ${data["title"]} salvo com sucesso<p>`
+        const footer = `<button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>`
+        callModal(label, body, footer)
       })
     }
 
@@ -310,13 +275,22 @@
         if(response.status == 204){
           calendar.destroy()
           renderCalendar()
-          deleteModal()
+          const label = `Evento deletado com sucesso`
+          const body = `<p>Evento deletado com sucesso</p>`
+          const footer = `<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fechar</button>`
+          callModal(label, body, footer)
         }else{
-          errorModal()
+          const label = `Erro ao salvar evento`
+          const body = `<p>Erro interno ao tentar salvar evento, tente novamente e caso o erro persista contacte um administrador</p>`
+          const footer = `<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fechar</button>`
+          callModal(label, body, footer)
         }
       })
       .catch((error) => {
-        errorModal()
+        const label = `Erro ao salvar evento`
+        const body = `<p>Erro interno ao tentar salvar evento, tente novamente e caso o erro persista contacte um administrador</p>`
+        const footer = `<button type="button" class="btn btn-danger" data-bs-dismiss="modal">Fechar</button>`
+        callModal(label, body, footer)
       })
     }
 
